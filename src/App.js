@@ -8,7 +8,6 @@ import { sortData, prettyPrintStat } from "./utils/util";
 import numeral from "numeral";
 import Map from "./components/Map";
 import Chat from "./components/Chat";
-import "leaflet/dist/leaflet.css";
 
 const App = () => {
   const [country, setInputCountry] = useState("worldwide");
