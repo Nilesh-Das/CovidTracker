@@ -1,127 +1,139 @@
-import { useRef, useState } from 'react';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import { MenuItem, FormControl, Select,Card, CardContent} from "@material-ui/core";
+import InfoBox from "./components/InfoBox";
+import LineGraph from "./components/LineGraph";
+import Table from "./components/Table";
+import { sortData, prettyPrintStat } from "./utils/util";
+import numeral from "numeral";
+import Map from "./components/Map";
+import Chat from "./components/Chat";
+import "leaflet/dist/leaflet.css";
 
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
-// import 'firebase/analytics';
+const App = () => {
+  const [country, setInputCountry] = useState("worldwide");
+  const [countryInfo, setCountryInfo] = useState({});
+  const [countries, setCountries] = useState([]);
+  const [mapCountries, setMapCountries] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [casesType, setCasesType] = useState("cases");
+  const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
+  const [mapZoom, setMapZoom] = useState(3);
 
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+  useEffect(() => {
+    fetch("https://disease.sh/v3/covid-19/all")
+      .then((response) => response.json())
+      .then((data) => {
+        setCountryInfo(data);
+      });
+  }, []);
 
-firebase.initializeApp({
-  apiKey: "AIzaSyAulNgNxgWjadotcq7RtNWUIx19cDXkoXs",
-  authDomain: "hello-firebase-65ab9.firebaseapp.com",
-  projectId: "hello-firebase-65ab9",
-  storageBucket: "hello-firebase-65ab9.appspot.com",
-  messagingSenderId: "759050800189",
-  appId: "1:759050800189:web:9662fd03d1e9c682c86e54"
-})
+  useEffect(() => {
+    const getCountriesData = async () => {
+      fetch("https://disease.sh/v3/covid-19/countries")
+        .then((response) => response.json())
+        .then((data) => {
+          const countries = data.map((country) => ({
+            name: country.country,
+            value: country.countryInfo.iso2,
+          }));
+          let sortedData = sortData(data);
+          setCountries(countries);
+          setMapCountries(data);
+          setTableData(sortedData);
+        });
+    };
 
-const auth = firebase.auth();
-const firestore = firebase.firestore();
-// const analytics = firebase.analytics();
+    getCountriesData();
+  }, []);
 
+  const onCountryChange = async (e) => {
+    const countryCode = e.target.value;
 
-function App() {
-
-  const [user] = useAuthState(auth);
+    const url = countryCode === "worldwide"
+      ? "https://disease.sh/v3/covid-19/all"
+      : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+    if(countryCode === "worldwide") {
+      await fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          setInputCountry("worldwide");
+          setCountryInfo(data);
+          setMapCenter({ lat: 34.80746, lng: -40.4796 });
+          setMapZoom(3);
+        });
+    } else {
+      await fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          setInputCountry(countryCode);
+          setCountryInfo(data);
+          setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+          setMapZoom(4);
+        });
+    }
+  };
 
   return (
-    <div className="App">
-      <header>
-        <h1>⚛️🔥💬</h1>
-        <SignOut />
-      </header>
-
-      <section>
-        {user ? <ChatRoom /> : <SignIn />}
-      </section>
-
+    <div className="app">
+      <div className="app__left">
+        <div className="app__header">
+          <h1>COVID-19 Tracker</h1>
+          <FormControl className="app__dropdown">
+            <Select
+              variant="outlined"
+              value={country}
+              onChange={onCountryChange}
+            >
+              <MenuItem key="worldwide" value="worldwide">Worldwide</MenuItem>
+              {countries.map((country) => (
+                <MenuItem key={country.name} value={country.value}>{country.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className="app__stats">
+          <InfoBox
+            onClick={(e) => setCasesType("cases")}
+            title="Coronavirus Cases"
+            isRed
+            active={casesType === "cases"}
+            cases={prettyPrintStat(countryInfo.todayCases)}
+            total={numeral(countryInfo.cases).format("0.0a")} />
+          <InfoBox
+            onClick={(e) => setCasesType("recovered")}
+            title="Recovered"
+            active={casesType === "recovered"}
+            cases={prettyPrintStat(countryInfo.todayRecovered)}
+            total={numeral(countryInfo.recovered).format("0.0a")} />
+          <InfoBox
+            onClick={(e) => setCasesType("deaths")}
+            title="Deaths"
+            isRed
+            active={casesType === "deaths"}
+            cases={prettyPrintStat(countryInfo.todayDeaths)}
+            total={numeral(countryInfo.deaths).format("0.0a")} />
+        </div>
+        <Map 
+          countries={mapCountries}
+          casesType={casesType}
+          center={mapCenter}
+          zoom={mapZoom}
+        />
+        <Chat />
+      </div>
+      <Card className="app__right">
+        <CardContent>
+          <div className="app__information">
+            <h3>Worldwide new {casesType}</h3>
+            <LineGraph casesType={casesType} />
+            <h3>Live Cases by Country</h3>
+            <Table countries={tableData} />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-}
-
-function SignIn() {
-
-  const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  }
-
-  return (
-    <>
-      <button className="sign-in" onClick={signInWithGoogle}>Sign in with Google</button>
-      <p>Do not violate the community guidelines or you will be banned for life!</p>
-    </>
-  )
-
-}
-
-function SignOut() {
-  return auth.currentUser && (
-    <button className="sign-out" onClick={() => auth.signOut()}>Sign Out</button>
-  )
-}
-
-
-function ChatRoom() {
-  const dummy = useRef();
-  const messagesRef = firestore.collection('messages');
-  const query = messagesRef.orderBy('createdAt').limit(25);
-
-  const [messages] = useCollectionData(query, { idField: 'id' });
-
-  const [formValue, setFormValue] = useState('');
-
-
-  const sendMessage = async (e) => {
-    e.preventDefault();
-
-    const { uid, photoURL } = auth.currentUser;
-
-    await messagesRef.add({
-      text: formValue,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid,
-      photoURL
-    })
-
-    setFormValue('');
-    dummy.current.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  return (<>
-    <main>
-
-      {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
-
-      <span ref={dummy}></span>
-
-    </main>
-
-    <form onSubmit={sendMessage}>
-
-      <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="say something nice" />
-
-      <button type="submit" disabled={!formValue}>🕊️</button>
-
-    </form>
-  </>)
-}
-
-
-function ChatMessage(props) {
-  const { text, uid, photoURL } = props.message;
-
-  const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
-
-  return (<>
-    <div className={`message ${messageClass}`}>
-      <img src={photoURL || 'https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png'} alt='Avatar' />
-      <p>{text}</p>
-    </div>
-  </>)
 }
 
 export default App;

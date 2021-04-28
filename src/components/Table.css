@@ -1,0 +1,24 @@
+.table-wrapper {
+  max-height: 520px;
+  overflow-y: scroll;
+}
+
+table thead tr th {
+  position: sticky;
+  top: 0px;
+  color: #6a5d5d;
+  background-color: white;
+}
+
+.table-wrapper tr {
+  justify-content: space-between;
+}
+
+.table-wrapper td {
+  padding: 0.5rem;
+  border: none;
+}
+
+.table-wrapper tr:nth-of-type(odd) {
+  background-color: #f3f2f8;
+}
