@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Map from "./components/Map";
 import { MenuItem, FormControl, Select,Card, CardContent} from "@material-ui/core";
 import InfoBox from "./components/InfoBox";
 import LineGraph from "./components/LineGraph";
 import Table from "./components/Table";
 import { sortData, prettyPrintStat } from "./utils/util";
 import numeral from "numeral";
-import Map from "./components/Map";
 import Chat from "./components/Chat";
 
 const App = () => {
@@ -16,8 +16,8 @@ const App = () => {
   const [mapCountries, setMapCountries] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [casesType, setCasesType] = useState("cases");
-  const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
-  const [mapZoom, setMapZoom] = useState(3);
+  const [mapCenter, setMapCenter] = useState({ lat: 15.4542, lng: 18.7322 });
+  const [mapZoom, setMapZoom] = useState(2);
 
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all")
@@ -58,8 +58,8 @@ const App = () => {
         .then((data) => {
           setInputCountry("worldwide");
           setCountryInfo(data);
-          setMapCenter({ lat: 34.80746, lng: -40.4796 });
-          setMapZoom(3);
+          setMapCenter({ lat: 15.4542, lng: 18.7322 });
+          setMapZoom(2);
         });
     } else {
       await fetch(url)

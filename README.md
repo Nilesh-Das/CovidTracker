@@ -6,9 +6,8 @@ with Live Chat feature with moderation.
 [Covid Tracker App](https://covid19-tracker-chat.herokuapp.com/)
 
 ## TODO
-- [ ] Fix Map
+- [ ] Implement chat backend
 - [ ] Add more feautures/functionalities
-- [ ] Implement better backend
 
 ## Contributing
 

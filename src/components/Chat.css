@@ -6,6 +6,7 @@
   padding: 1rem;
   border-radius: 20px;
   margin-top: 16px;
+  margin-bottom: 10px;
   box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
 }
 
@@ -24,7 +25,7 @@
   z-index: 99;
   padding: 10px;
   box-sizing: border-box;
-  border-radius: 20px 20px 0 0;
+  border-radius: 10px 10px 0 0;
 }
 
 .Chat section {
@@ -32,6 +33,7 @@
   flex-direction: column;
   justify-content: center;
   min-height: 100vh;
+  border-radius: 0 0 10px 10px;
   background-color: rgb(40, 37, 53);
 }
 
@@ -149,7 +151,7 @@ p {
   color: black;
 }
 
-img {
+.message img {
   width: 40px;
   height: 40px;
   border-radius: 50%;

@@ -40,8 +40,9 @@ export const prettyPrintStat = (stat) =>
   stat ? `+${numeral(stat).format("0.0a")}` : "+0";
 
 export const showDataOnMap = (data, casesType = "cases") => {
-  return data.map((country) => {
+  return data.map((country, index) => {
       return (
+        <div key={index}>
         <Circle
           center={[country.countryInfo.lat, country.countryInfo.long]}
           color={casesTypeColors[casesType].hex}
@@ -70,6 +71,7 @@ export const showDataOnMap = (data, casesType = "cases") => {
           </div>
         </Tooltip>
         </Circle>
+        </div>
       );
   });
 };

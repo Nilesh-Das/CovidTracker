@@ -1,12 +1,12 @@
 import React from "react";
-import "./Map.css";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { showDataOnMap } from "../utils/util";
+import "./Map.css";
 import 'leaflet/dist/leaflet.css';
 
 function Map({ countries, casesType, center, zoom }) {
-  return (
-    <div className="map">
+	return (
+		<div className="map-container">
       <MapContainer
         center={center}
         zoom={zoom}
@@ -21,7 +21,7 @@ function Map({ countries, casesType, center, zoom }) {
         {showDataOnMap(countries, casesType)}
       </MapContainer>
     </div>
-  );
+	);
 }
 
 export default Map;
