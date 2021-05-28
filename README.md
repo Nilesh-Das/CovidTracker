@@ -5,6 +5,8 @@ with Live Chat feature with moderation.
 ## Live Demo
 [Covid Tracker App](https://covid19-tracker-chat.herokuapp.com/)
 
+![alt-text](demo.gif)
+
 ## TODO
 - [ ] Implement chat backend
 - [ ] Add more feautures/functionalities
