@@ -3,11 +3,12 @@ Covid Tracker is a web app to track covid-19 cases around the world
 with Live Chat feature with moderation.
 
 ## Live Demo
-[Covid Tracker App](https://covid19-tracker-chat.herokuapp.com/)
+[Covid Tracker App](https://www.nileshdas.me/CovidTracker/)
 
 ![alt-text](demo.gif)
 
 ## TODO
+- [ ] Make it Responsive 
 - [ ] Implement chat backend
 - [ ] Add more feautures/functionalities
 
