@@ -3,7 +3,7 @@ Covid Tracker is a web app to track covid-19 cases around the world
 with Live Chat feature with moderation.
 
 ## Live Demo
-[Covid Tracker App](https://www.nileshdas.me/CovidTracker/)
+[Covid Tracker App](https://nilesh-das.github.io/CovidTracker/)
 
 ![alt-text](demo.gif)
 
